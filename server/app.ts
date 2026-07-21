@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import 'express-async-errors';
 import mongoose from 'mongoose';
 import errorHandler from './middleware/errorHandler.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -42,6 +44,9 @@ app.get('/api/health', (_req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(errorHandler);
 
