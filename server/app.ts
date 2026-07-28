@@ -8,6 +8,10 @@ import mongoose from 'mongoose';
 import errorHandler from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import issueRoutes from './routes/issueRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
+import labelRoutes from './routes/labelRoutes.js';
+import savedViewRoutes from './routes/savedViewRoutes.js';
 
 const app = express();
 
@@ -47,6 +51,10 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/issues', issueRoutes);
+app.use('/api/issues/:issueId/comments', commentRoutes);
+app.use('/api/labels', labelRoutes);
+app.use('/api/views', savedViewRoutes);
 
 app.use(errorHandler);
 
