@@ -3,6 +3,7 @@ import { IssueFilters } from '../types';
 import { useIssues } from '../hooks/useIssues';
 import FilterBar from '../components/issue-list/FilterBar';
 import IssueTable from '../components/issue-list/IssueTable';
+import SavedViewsSidebar from '../components/shared/SavedViewsSidebar';
 
 export default function ListViewPage() {
   const [filters, setFilters] = useState<IssueFilters>({});
@@ -24,19 +25,22 @@ export default function ListViewPage() {
   }, [data]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
-      <FilterBar filters={filters} onFiltersChange={setFilters} />
+    <div className="flex h-[calc(100vh-3.5rem)]">
+      <SavedViewsSidebar onApplyFilters={setFilters} currentFilters={filters} />
 
-      <IssueTable
-        issues={issues}
-        hasNextPage={!!hasNextPage}
-        isFetchingNextPage={isFetchingNextPage}
-        fetchNextPage={fetchNextPage}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        onRetry={() => refetch()}
-      />
+      <div className="flex-1 flex flex-col">
+        <FilterBar filters={filters} onFiltersChange={setFilters} />
+        <IssueTable
+          issues={issues}
+          hasNextPage={!!hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          onRetry={() => refetch()}
+        />
+      </div>
     </div>
   );
 }

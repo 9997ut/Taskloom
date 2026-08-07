@@ -10,6 +10,7 @@ import ListViewPage from './pages/ListViewPage';
 import BoardViewPage from './pages/BoardViewPage';
 import IssueDetailPage from './pages/IssueDetailPage';
 import SettingsPage from './pages/SettingsPage';
+import CommandPalette from './components/command-palette/CommandPalette';
 
 function AppRoutes() {
   const { checkAuth, isAuthenticated, isLoading } = useAuthStore();
@@ -56,6 +57,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AppRoutes />
+        <CommandPalette />
       </BrowserRouter>
     </QueryClientProvider>
   );
