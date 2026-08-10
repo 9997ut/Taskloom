@@ -40,7 +40,7 @@ export async function createSavedView(req: AuthRequest, res: Response): Promise<
 }
 
 export async function deleteSavedView(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({

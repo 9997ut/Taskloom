@@ -21,7 +21,7 @@ function decodeCursor(cursor: string): { s: string; id: string } | null {
 }
 
 export async function listComments(req: AuthRequest, res: Response): Promise<void> {
-  const { issueId } = req.params;
+  const { issueId } = req.params as { issueId: string };
   const { cursor, limit: limitStr } = req.query as Record<string, string | undefined>;
 
   if (!Types.ObjectId.isValid(issueId)) {
@@ -86,7 +86,7 @@ export async function listComments(req: AuthRequest, res: Response): Promise<voi
 }
 
 export async function createComment(req: AuthRequest, res: Response): Promise<void> {
-  const { issueId } = req.params;
+  const { issueId } = req.params as { issueId: string };
 
   if (!Types.ObjectId.isValid(issueId)) {
     res.status(404).json({
@@ -134,7 +134,7 @@ export async function createComment(req: AuthRequest, res: Response): Promise<vo
 }
 
 export async function deleteComment(req: AuthRequest, res: Response): Promise<void> {
-  const { issueId, commentId } = req.params;
+  const { issueId, commentId } = req.params as { issueId: string; commentId: string };
 
   if (!Types.ObjectId.isValid(issueId) || !Types.ObjectId.isValid(commentId)) {
     res.status(404).json({

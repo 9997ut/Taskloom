@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import mongoose, { Types, FilterQuery, SortOrder } from 'mongoose';
+import mongoose, { Types, SortOrder } from 'mongoose';
 import Issue, { IIssue, STATUS_VALUES, PRIORITY_VALUES } from '../models/Issue.js';
 import User from '../models/User.js';
 import Label from '../models/Label.js';
@@ -44,12 +44,12 @@ export async function listIssues(req: AuthRequest, res: Response): Promise<void>
     sortBy = 'updatedAt',
     sortOrder = 'desc',
     cursor,
-    limit = 20,
+    limit,
   } = req.query as Record<string, string | undefined>;
 
   const parsedLimit = Math.min(Math.max(parseInt(limit || '20', 10) || 20, 1), 100);
 
-  const filter: FilterQuery<IIssue> = { isDeleted: false };
+  const filter: Record<string, unknown> = { isDeleted: false };
 
   if (status) {
     const statuses = status.split(',');
@@ -239,7 +239,7 @@ export async function createIssue(req: AuthRequest, res: Response): Promise<void
 }
 
 export async function getIssue(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -271,7 +271,7 @@ export async function getIssue(req: AuthRequest, res: Response): Promise<void> {
 }
 
 export async function updateIssue(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -345,7 +345,7 @@ export async function updateIssue(req: AuthRequest, res: Response): Promise<void
 }
 
 export async function deleteIssue(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -369,7 +369,7 @@ export async function deleteIssue(req: AuthRequest, res: Response): Promise<void
 }
 
 export async function createSubtask(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -407,7 +407,7 @@ export async function createSubtask(req: AuthRequest, res: Response): Promise<vo
 }
 
 export async function updateSubtask(req: AuthRequest, res: Response): Promise<void> {
-  const { id, subtaskId } = req.params;
+  const { id, subtaskId } = req.params as { id: string; subtaskId: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -452,7 +452,7 @@ export async function updateSubtask(req: AuthRequest, res: Response): Promise<vo
 }
 
 export async function deleteSubtask(req: AuthRequest, res: Response): Promise<void> {
-  const { id, subtaskId } = req.params;
+  const { id, subtaskId } = req.params as { id: string; subtaskId: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({

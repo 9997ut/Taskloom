@@ -48,7 +48,7 @@ export async function createLabel(req: AuthRequest, res: Response): Promise<void
 }
 
 export async function updateLabel(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
@@ -103,7 +103,7 @@ export async function updateLabel(req: AuthRequest, res: Response): Promise<void
 }
 
 export async function deleteLabel(req: AuthRequest, res: Response): Promise<void> {
-  const { id } = req.params;
+  const { id } = req.params as { id: string };
 
   if (!Types.ObjectId.isValid(id)) {
     res.status(404).json({
