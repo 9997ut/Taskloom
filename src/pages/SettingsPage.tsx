@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, ApiResponseError } from '../lib/api';
 import { Label } from '../types';
+import LabelListItem from '../components/labels/LabelListItem';
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
@@ -13,9 +14,6 @@ export default function SettingsPage() {
 
   const [newName, setNewName] = useState('');
   const [newColor, setNewColor] = useState('#6366F1');
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editName, setEditName] = useState('');
-  const [editColor, setEditColor] = useState('');
   const [error, setError] = useState('');
 
   const createLabel = useMutation({
@@ -35,7 +33,6 @@ export default function SettingsPage() {
       api(`/labels/${id}`, { method: 'PATCH', body: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['labels'] });
-      setEditingId(null);
       setError('');
     },
     onError: (err: ApiResponseError) => setError(err.message),
@@ -51,20 +48,6 @@ export default function SettingsPage() {
   function handleCreate() {
     if (!newName.trim()) return;
     createLabel.mutate({ name: newName.trim(), color: newColor });
-  }
-
-  function startEdit(label: Label) {
-    setEditingId(label.id);
-    setEditName(label.name);
-    setEditColor(label.color);
-  }
-
-  function saveEdit() {
-    if (!editingId || !editName.trim()) return;
-    updateLabel.mutate({
-      id: editingId,
-      data: { name: editName.trim(), color: editColor }
-    });
   }
 
   return (
@@ -114,52 +97,12 @@ export default function SettingsPage() {
         ) : (
           <div className="space-y-2">
             {labels?.map((label) => (
-              <div key={label.id} className="flex items-center gap-3 p-3 bg-gray-900/30 rounded-lg border border-gray-800 group">
-                {editingId === label.id ? (
-                  <>
-                    <input
-                      type="color"
-                      value={editColor}
-                      onChange={(e) => setEditColor(e.target.value)}
-                      className="w-8 h-8 rounded cursor-pointer bg-transparent border-0"
-                      aria-label="Edit label color"
-                    />
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEdit()}
-                      className="flex-1 bg-gray-900 border border-gray-700 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
-                      autoFocus
-                    />
-                    <button onClick={saveEdit} className="text-xs text-brand-400 hover:text-brand-300">Save</button>
-                    <button onClick={() => setEditingId(null)} className="text-xs text-gray-500 hover:text-gray-300">Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <span
-                      className="w-4 h-4 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: label.color }}
-                    />
-                    <span className="text-sm text-gray-200 flex-1">{label.name}</span>
-                    <button
-                      onClick={() => startEdit(label)}
-                      className="text-xs text-gray-500 hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-all"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm(`Delete label "${label.name}"? It will be removed from all issues.`))
-                          deleteLabel.mutate(label.id);
-                      }}
-                      className="text-xs text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
+              <LabelListItem
+                key={label.id}
+                label={label}
+                onEdit={(id, data) => updateLabel.mutate({ id, data })}
+                onDelete={(id) => deleteLabel.mutate(id)}
+              />
             ))}
 
             {labels?.length === 0 && (
