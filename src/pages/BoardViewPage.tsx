@@ -3,8 +3,8 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCenter, P
 import { useIssues } from '../hooks/useIssues';
 import { useOptimisticStatusUpdate } from '../hooks/useOptimisticUpdate';
 import { IssueSummary, IssueStatus } from '../types';
-import BoardColumn from '../components/issue-board/BoardColumn';
-import BoardCard from '../components/issue-board/BoardCard';
+import BoardColumn from '../components/issue-board/BoardColumn.tsx';
+import BoardCard from '../components/issue-board/BoardCard.tsx';
 
 const COLUMNS: { status: IssueStatus; label: string }[] = [
   { status: 'backlog', label: 'Backlog' },
