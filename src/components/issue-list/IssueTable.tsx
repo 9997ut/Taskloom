@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { IssueSummary } from '../../types';
 import IssueRow from './IssueRow';
 
@@ -13,6 +14,8 @@ interface IssueTableProps {
   onRetry: () => void;
 }
 
+const ROW_HEIGHT = 41; // px — matches IssueRow py-2.5 + content + border
+
 export default function IssueTable({
   issues,
   hasNextPage,
@@ -23,28 +26,33 @@ export default function IssueTable({
   error,
   onRetry,
 }: IssueTableProps) {
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // infinite scroll trigger
-  useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+  const virtualizer = useVirtualizer({
+    count: issues.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 10,
+  });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
+  // fetch next page when user scrolls near the bottom
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !hasNextPage || isFetchingNextPage) return;
 
-    const el = loadMoreRef.current;
-    if (el) observer.observe(el);
-
-    return () => {
-      if (el) observer.unobserve(el);
-    };
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    if (scrollHeight - scrollTop - clientHeight < 200) {
+      fetchNextPage();
+    }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   if (isLoading) {
     return (
@@ -78,9 +86,9 @@ export default function IssueTable({
   }
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 flex flex-col overflow-hidden">
       {/* header row */}
-      <div className="flex items-center gap-3 px-6 py-2 border-b border-gray-800 text-xs text-gray-500 font-medium sticky top-0 bg-gray-950 z-10">
+      <div className="flex items-center gap-3 px-6 py-2 border-b border-gray-800 text-xs text-gray-500 font-medium bg-gray-950 z-10 flex-shrink-0">
         <span className="w-5"></span>
         <span className="w-16">Status</span>
         <span className="flex-1">Title</span>
@@ -89,14 +97,33 @@ export default function IssueTable({
         <span className="w-20 text-right">Updated</span>
       </div>
 
-      {issues.map((issue) => (
-        <IssueRow key={issue.id} issue={issue} />
-      ))}
+      {/* virtualized list */}
+      <div ref={scrollRef} className="flex-1 overflow-auto">
+        <div
+          style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
+        >
+          {virtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.key}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <IssueRow issue={issues[virtualRow.index]} />
+            </div>
+          ))}
+        </div>
 
-      {/* load more sentinel */}
-      <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
+        {/* loading indicator at bottom */}
         {isFetchingNextPage && (
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-500 border-t-transparent" />
+          <div className="h-10 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-500 border-t-transparent" />
+          </div>
         )}
       </div>
     </div>
