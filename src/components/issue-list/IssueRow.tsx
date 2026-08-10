@@ -1,5 +1,5 @@
 import { IssueSummary, IssueStatus } from '../../types';
-import { useUpdateIssue } from '../../hooks/useIssueMutations';
+import { useOptimisticStatusUpdate } from '../../hooks/useOptimisticUpdate';
 import { Link } from 'react-router-dom';
 
 interface IssueRowProps {
@@ -25,7 +25,7 @@ const PRIORITY_CONFIG = {
 const STATUS_ORDER: IssueStatus[] = ['backlog', 'todo', 'in-progress', 'done', 'cancelled'];
 
 export default function IssueRow({ issue }: IssueRowProps) {
-  const updateIssue = useUpdateIssue();
+  const updateIssue = useOptimisticStatusUpdate();
   const statusCfg = STATUS_CONFIG[issue.status];
   const priorityCfg = PRIORITY_CONFIG[issue.priority];
 

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
-import { IssueDetail, IssueSummary } from '../types';
+import { IssueDetail } from '../types';
 
 interface UpdateIssueVars {
   id: string;

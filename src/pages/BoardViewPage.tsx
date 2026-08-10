@@ -1,7 +1,7 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useIssues } from '../hooks/useIssues';
-import { useUpdateIssue } from '../hooks/useIssueMutations';
+import { useOptimisticStatusUpdate } from '../hooks/useOptimisticUpdate';
 import { IssueSummary, IssueStatus } from '../types';
 import BoardColumn from '../components/issue-board/BoardColumn';
 import BoardCard from '../components/issue-board/BoardCard';
@@ -16,7 +16,7 @@ const COLUMNS: { status: IssueStatus; label: string }[] = [
 
 export default function BoardViewPage() {
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useIssues({ sortBy: 'updatedAt', sortOrder: 'desc' });
-  const updateIssue = useUpdateIssue();
+  const updateIssue = useOptimisticStatusUpdate();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -25,7 +25,7 @@ export default function BoardViewPage() {
   );
 
   // load all pages for the board
-  useMemo(() => {
+  useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }

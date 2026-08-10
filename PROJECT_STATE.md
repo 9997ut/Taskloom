@@ -1,42 +1,31 @@
-# Taskloom — Project State
+# Project State
 
-> Auto-updated after each build phase.
+Last updated: 2026-08-10T16:30:00+05:30
+Last completed phase: 18 of 18
+Current task: Final audit complete
+Next step: —
+Current branch: dev
+Last command run: npx vitest run
 
-## Current Phase: Complete (All Phases)
+## Phase Summary
 
-### Phase Summary
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 0 | Repo & Tooling Setup | ✅ |
-| 1 | Database & Models | ✅ |
-| 2 | Authentication (Backend) | ✅ |
-| 3 | Issue CRUD API | ✅ |
-| 4 | Comments & Labels API | ✅ |
-| 5 | Saved Views API | ✅ |
-| 6 | Frontend Scaffold & Routing | ✅ |
-| 7 | List View | ✅ |
-| 8 | Issue Detail View | ✅ |
-| 9 | Board View (Drag & Drop) | ✅ |
-| 10 | Optimistic Updates | ✅ |
-| 11 | Command Palette | ✅ |
-| 12 | Accessibility | ✅ |
-| 13 | Saved Views UI | ✅ |
-| 14 | Label Management | ✅ |
-| 15 | Integration Tests | ✅ |
+All 18 phases complete. 65+ commits on `dev`.
 
 ### Test Results
-- **Auth tests**: 15 passing
-- **Issue tests**: 11 passing
-- **Total**: 26 passing, 0 failing
+- Auth tests: 15 passing
+- Issue tests: 11 passing
+- Total: 26 passing, 0 failing
 
-### Known Limitations
-- No multi-tenant/workspace support
+### Decisions made
+- Refresh cookie path is /api/auth
+- Pagination default limit is 20
+- Refresh tokens include jti for uniqueness
+- IssueRow and BoardView use optimistic status updates
+- Detail page sidebar uses standard mutations (not optimistic) for non-status fields
+- useMemo-based side-effect in BoardView corrected to useEffect
+
+### Known limitations (per spec Section 13 — intentional non-goals)
+- No multi-workspace support
 - No file uploads
 - No real-time WebSocket updates
-- No email verification or password reset flow
-
-### Tech Stack
-- **Frontend**: React 19, TypeScript, Tailwind CSS 3, TanStack Query, Zustand, @dnd-kit, React Router
-- **Backend**: Express 4, Mongoose 9, JWT (access + refresh with rotation), Zod
-- **Testing**: Vitest, Supertest, mongodb-memory-server
-- **Build**: Vite 8, tsx
+- No email verification or password reset
