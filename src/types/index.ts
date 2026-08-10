@@ -14,6 +14,10 @@ export interface Label {
   color: string;
 }
 
+// aliases for component prop clarity
+export type LabelSummary = Label;
+export type UserSummary = User;
+
 export interface Subtask {
   _id: string;
   title: string;
