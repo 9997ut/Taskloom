@@ -4,7 +4,7 @@ import { useIssues } from '../../hooks/useIssues';
 import { useCreateIssue } from '../../hooks/useIssueMutations';
 import { useOptimisticStatusUpdate } from '../../hooks/useOptimisticUpdate';
 import { useUiStore } from '../../stores/uiStore';
-import { IssueSummary, IssueStatus } from '../../types';
+import { IssueStatus } from '../../types';
 
 const STATUS_OPTIONS: { value: IssueStatus; label: string; icon: string }[] = [
   { value: 'backlog', label: 'Backlog', icon: '○' },
@@ -114,7 +114,7 @@ export default function CommandPalette() {
           createIssue.mutate({ title: createTitle.trim() }, {
             onSuccess: (data) => {
               handleClose();
-              navigate(`/issues/${data.issue._id || data.issue.id}`);
+              navigate(`/issues/${data.issue.id}`);
             },
           });
         }

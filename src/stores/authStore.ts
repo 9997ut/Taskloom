@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { api, setAccessToken, ApiResponseError } from '../lib/api';
+import { api, setAccessToken } from '../lib/api';
 
 interface User {
   id: string;

@@ -1,4 +1,4 @@
-import { useRef, KeyboardEvent } from 'react';
+import { useRef } from 'react';
 
 interface SkipLinkProps {
   targetId: string;
